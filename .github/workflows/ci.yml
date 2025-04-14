@@ -7,7 +7,7 @@ on:
 jobs:
   tests:
     name: Tests
-    reuns-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
