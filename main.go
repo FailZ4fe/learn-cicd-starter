@@ -96,3 +96,8 @@ func main() {
 	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(srv.ListenAndServe())
 }
+
+func unusedFunction() {
+	// This is not the greatest song in the world, no,
+	// This is just a tribute
+}
