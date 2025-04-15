@@ -1,4 +1,4 @@
-name: ci
+name: 🚀 Tests Passing
 
 on: 
   pull_request:
