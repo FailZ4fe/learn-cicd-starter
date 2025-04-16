@@ -1,0 +1,29 @@
+name: Deploy to Coud Run
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    setps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Run buildprod script
+        run: |
+          chmod +x ./scripts/buildprod.sh
+          ./scripts/buildprod.sh
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: solid-sun-457004-d2
+          service_account_key: $ {{ secrets.GCP_CREDENTIALS }}
+          export_default_credentials: true
+
+        - name: Submit build to Google Cloud build
+          run: |
+            gcloud builds submit --tag us-central1-docker.pkg.dev/solid-sun-457004-d2/notely-ar-repo/notely:latest .
