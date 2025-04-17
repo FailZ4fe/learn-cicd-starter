@@ -8,6 +8,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -31,6 +34,15 @@ jobs:
         run: |
           gcloud builds submit --tag us-central1-docker.pkg.dev/notely-457022/notely-ar-repo/notely:latest .
 
+      - name: Install goose
+       run: |
+         curl -fsSL https://raw.githubusercontent.com/pressly/goose/master/install.sh | sh echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Run DB Migrations
+        run: |
+          chmod +x ./scripts/migrateup.sh
+          ./scripts/migrateup.sh
+
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy notely \
@@ -39,3 +51,7 @@ jobs:
           --allow-unauthenticated \
           --project notely-457022 \
           --max-instances=4
+
+      - name: Check for secrets in code
+        run: |
+          git diff HEAD | grep -i 'DATABASE_URL' && echo "⚠️ Warning: Possible credentials leak!" || echo "✅ No secrets found"
